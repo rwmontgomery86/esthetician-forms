@@ -40,9 +40,15 @@ export function TreatmentSeriesForm() {
   function updateLogEntry(index: number, field: 'treatmentName' | 'date', value: string) {
     setFormData((prev) => ({
       ...prev,
-      treatmentLog: prev.treatmentLog.map((entry, i) =>
-        i === index ? { ...entry, [field]: value } : entry
-      ),
+      treatmentLog: prev.treatmentLog.map((entry, i) => {
+        if (i !== index) return entry
+        const updated = { ...entry, [field]: value }
+        // Auto-fill today's date when a treatment is selected and date is empty
+        if (field === 'treatmentName' && value && !entry.date) {
+          updated.date = new Date().toISOString().slice(0, 10)
+        }
+        return updated
+      }),
     }))
   }
 

@@ -7,6 +7,12 @@ export interface EstheticianProfile {
   address: string
 }
 
+export interface Esthetician {
+  id: string
+  name: string
+  email: string
+}
+
 export interface Treatment {
   id: string
   name: string
@@ -26,6 +32,8 @@ export interface ProductCategory {
 export interface Settings {
   profile: EstheticianProfile
   logo: string | null
+  estheticians: Esthetician[]
+  selectedEstheticianId: string
   treatments: Treatment[]
   productCatalog: ProductCategory[]
 }

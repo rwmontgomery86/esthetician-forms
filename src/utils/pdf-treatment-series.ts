@@ -151,5 +151,6 @@ export function generateTreatmentSeriesPdf(
   // Footer
   addFooter(doc, 'Treatment Series Recommendation')
 
-  doc.save('Treatment-Series-Recommendation.pdf')
+  const pdfUrl = doc.output('bloburl') as unknown as string
+  window.open(pdfUrl, '_blank')
 }

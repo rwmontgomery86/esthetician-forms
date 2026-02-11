@@ -133,10 +133,8 @@ export function generateSkincareRoutinePdf(
   // Footer
   addFooter(doc, 'Recommended Skincare Routine')
 
-  const clientSlug = data.clientName
-    ? data.clientName.replace(/[^a-zA-Z0-9]/g, '-')
-    : 'Client'
-  doc.save(`Skincare-Routine-${clientSlug}.pdf`)
+  const pdfUrl = doc.output('bloburl') as unknown as string
+  window.open(pdfUrl, '_blank')
 }
 
 function addRoutineRow(

@@ -22,10 +22,21 @@ export function drawHeader(
 ): number {
   let yPos = 12
 
-  // Logo on the left
+  // Logo on the left (preserve aspect ratio, fit within 30mm height)
   if (logo) {
     try {
-      doc.addImage(logo, 'PNG', MARGIN_LEFT, yPos, 30, 30)
+      const maxH = 30
+      const maxW = 55
+      const img = new Image()
+      img.src = logo
+      const aspect = img.width / img.height
+      let w = maxH * aspect
+      let h = maxH
+      if (w > maxW) {
+        w = maxW
+        h = maxW / aspect
+      }
+      doc.addImage(logo, 'PNG', MARGIN_LEFT, yPos, w, h)
     } catch {
       // Skip logo if it fails to load
     }
