@@ -130,6 +130,44 @@ export function checkPageBreak(doc: jsPDF, yPos: number, needed: number): number
   return yPos
 }
 
+export function drawBarryPage(doc: jsPDF, barryImage: string, yPos: number): void {
+  // Barry image: ~¼ page height ≈ 70mm, centered horizontally
+  const maxH = 70
+  const img = new Image()
+  img.src = barryImage
+  const aspect = img.width / img.height
+  let w = maxH * aspect
+  let h = maxH
+  // Cap width to content area
+  if (w > CONTENT_WIDTH) {
+    w = CONTENT_WIDTH
+    h = CONTENT_WIDTH / aspect
+  }
+
+  const imgX = (PAGE_WIDTH - w) / 2
+  // Vertically center between header and footer area
+  const availableSpace = 260 - yPos // ~260mm is above footer
+  const imgY = yPos + (availableSpace - h) / 2 - 10
+
+  try {
+    doc.addImage(barryImage, 'JPEG', imgX, imgY, w, h)
+  } catch {
+    // Skip if image fails
+  }
+
+  // Caption below image
+  const captionY = imgY + h + 8
+  doc.setFontSize(14)
+  doc.setFont('helvetica', 'italic')
+  doc.setTextColor(...TEXT_DARK)
+  doc.text(
+    'Let Barry take care of all your facial needs.',
+    PAGE_WIDTH / 2,
+    captionY,
+    { align: 'center' }
+  )
+}
+
 export function addFooter(doc: jsPDF, title: string): void {
   const pageCount = doc.getNumberOfPages()
   for (let i = 1; i <= pageCount; i++) {

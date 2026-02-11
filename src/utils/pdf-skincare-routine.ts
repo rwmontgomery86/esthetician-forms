@@ -2,6 +2,7 @@ import jsPDF from 'jspdf'
 import type { SkincareRoutineData, Settings } from '../types'
 import {
   drawHeader,
+  drawBarryPage,
   addSectionHeading,
   addLabelValue,
   addBodyText,
@@ -15,6 +16,7 @@ import {
   PAGE_WIDTH,
   CONTENT_WIDTH,
 } from './pdf-shared'
+import { BARRY_NAME } from '../data/default-estheticians'
 
 export function generateSkincareRoutinePdf(
   data: SkincareRoutineData,
@@ -24,6 +26,15 @@ export function generateSkincareRoutinePdf(
 
   // Header
   let yPos = drawHeader(doc, settings.logo, settings.profile)
+
+  // Barry special page
+  if (settings.profile.name === BARRY_NAME && settings.barryImage) {
+    drawBarryPage(doc, settings.barryImage, yPos)
+    addFooter(doc, 'Recommended Skincare Routine')
+    const pdfUrl = doc.output('bloburl') as unknown as string
+    window.open(pdfUrl, '_blank')
+    return
+  }
 
   // Title
   doc.setFontSize(16)

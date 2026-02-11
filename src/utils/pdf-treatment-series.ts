@@ -3,6 +3,7 @@ import autoTable from 'jspdf-autotable'
 import type { TreatmentSeriesData, Settings } from '../types'
 import {
   drawHeader,
+  drawBarryPage,
   addSectionHeading,
   addFooter,
   checkPageBreak,
@@ -15,6 +16,7 @@ import {
   PAGE_WIDTH,
   CONTENT_WIDTH,
 } from './pdf-shared'
+import { BARRY_NAME } from '../data/default-estheticians'
 
 export function generateTreatmentSeriesPdf(
   data: TreatmentSeriesData,
@@ -24,6 +26,15 @@ export function generateTreatmentSeriesPdf(
 
   // Header
   let yPos = drawHeader(doc, settings.logo, settings.profile)
+
+  // Barry special page
+  if (settings.profile.name === BARRY_NAME && settings.barryImage) {
+    drawBarryPage(doc, settings.barryImage, yPos)
+    addFooter(doc, 'Treatment Series Recommendation')
+    const pdfUrl = doc.output('bloburl') as unknown as string
+    window.open(pdfUrl, '_blank')
+    return
+  }
 
   // Title
   doc.setFontSize(16)

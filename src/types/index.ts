@@ -32,6 +32,7 @@ export interface ProductCategory {
 export interface Settings {
   profile: EstheticianProfile
   logo: string | null
+  barryImage: string | null
   estheticians: Esthetician[]
   selectedEstheticianId: string
   treatments: Treatment[]

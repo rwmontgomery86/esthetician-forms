@@ -4,13 +4,13 @@ import { TreatmentSeriesForm } from './components/forms/TreatmentSeriesForm'
 import { SkincareRoutineForm } from './components/forms/SkincareRoutineForm'
 import { SettingsPage } from './components/settings/SettingsPage'
 import { useUIStore } from './stores/ui-store'
-import { loadDefaultLogo } from './utils/load-default-logo'
+import { loadDefaultAssets } from './utils/load-default-logo'
 
 export default function App() {
   const activeTab = useUIStore((s) => s.activeTab)
 
   useEffect(() => {
-    loadDefaultLogo()
+    loadDefaultAssets()
   }, [])
 
   return (

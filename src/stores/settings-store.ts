@@ -8,6 +8,7 @@ import {
   createDefaultEstheticians,
   BUSINESS_PHONE,
   BUSINESS_ADDRESS,
+  BARRY_NAME,
 } from '../data/default-estheticians'
 
 function createDefaultSettings(): Settings {
@@ -21,6 +22,7 @@ function createDefaultSettings(): Settings {
       address: BUSINESS_ADDRESS,
     },
     logo: null,
+    barryImage: null,
     estheticians,
     selectedEstheticianId: defaultId,
     treatments: createDefaultTreatments(),
@@ -46,6 +48,7 @@ interface SettingsStore {
   // Profile (resolved from selected esthetician + constants)
   getProfile: () => EstheticianProfile
   setLogo: (logo: string | null) => void
+  setBarryImage: (image: string | null) => void
 
   // Estheticians
   addEsthetician: (name: string, email: string) => void
@@ -84,6 +87,11 @@ export const useSettingsStore = create<SettingsStore>()(
       setLogo: (logo) =>
         set((state) => ({
           settings: { ...state.settings, logo },
+        })),
+
+      setBarryImage: (image) =>
+        set((state) => ({
+          settings: { ...state.settings, barryImage: image },
         })),
 
       // ===== Estheticians =====
@@ -251,22 +259,34 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'esthetician-settings',
-      version: 2,
-      migrate: (persisted: unknown) => {
+      version: 3,
+      migrate: (persisted: unknown, version: number) => {
         const state = persisted as Record<string, unknown>
         const settings = state.settings as Record<string, unknown> | undefined
-        // If no estheticians array, this is a v1 store — add defaults
-        if (settings && !settings.estheticians) {
+
+        // v1 → v2: add estheticians array
+        if (version < 2 && settings && !settings.estheticians) {
           const { estheticians, defaultId } = createDefaultEstheticians()
           settings.estheticians = estheticians
           settings.selectedEstheticianId = defaultId
-          // Sync profile with defaults
           const profile = settings.profile as Record<string, string>
           if (!profile.name) profile.name = estheticians[0].name
           if (!profile.email) profile.email = estheticians[0].email
           profile.phone = BUSINESS_PHONE
           profile.address = BUSINESS_ADDRESS
         }
+
+        // v2 → v3: add barryImage + Barry esthetician
+        if (version < 3 && settings) {
+          if (!('barryImage' in settings)) {
+            settings.barryImage = null
+          }
+          const estheticians = settings.estheticians as Array<{ id: string; name: string; email: string }> | undefined
+          if (estheticians && !estheticians.some((e) => e.name === BARRY_NAME)) {
+            estheticians.push({ id: crypto.randomUUID(), name: BARRY_NAME, email: '' })
+          }
+        }
+
         return state as { settings: Settings }
       },
     }
