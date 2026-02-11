@@ -27,9 +27,8 @@ export function drawHeader(
     try {
       const maxH = 30
       const maxW = 55
-      const img = new Image()
-      img.src = logo
-      const aspect = img.width / img.height
+      const props = doc.getImageProperties(logo)
+      const aspect = props.width / props.height
       let w = maxH * aspect
       let h = maxH
       if (w > maxW) {
@@ -133,9 +132,8 @@ export function checkPageBreak(doc: jsPDF, yPos: number, needed: number): number
 export function drawBarryPage(doc: jsPDF, barryImage: string, yPos: number): void {
   // Barry image: ~¼ page height ≈ 70mm, centered horizontally
   const maxH = 70
-  const img = new Image()
-  img.src = barryImage
-  const aspect = img.width / img.height
+  const props = doc.getImageProperties(barryImage)
+  const aspect = props.width / props.height
   let w = maxH * aspect
   let h = maxH
   // Cap width to content area
